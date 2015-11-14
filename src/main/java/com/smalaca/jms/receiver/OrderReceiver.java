@@ -4,6 +4,7 @@ import com.smalaca.jms.domain.Order;
 import com.smalaca.jms.store.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +17,9 @@ public class OrderReceiver {
     }
 
     @JmsListener(destination = "simple.queue")
-    public void receiveOrder(Order order) {
+    @SendTo("confirmation.queue")
+    public String receiveOrder(Order order) {
         storeService.register(order);
+        return order.getOrderNumber();
     }
 }
